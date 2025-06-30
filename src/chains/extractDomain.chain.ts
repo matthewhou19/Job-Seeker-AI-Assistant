@@ -1,4 +1,3 @@
-import { createExtractionChain } from "langchain/chains";
 import { OllamaClient } from "../llm/clients";
 import {
   extractDomainParser,
