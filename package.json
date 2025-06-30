@@ -1,0 +1,29 @@
+{
+  "name": "job-seeker-ai-assistant",
+  "version": "0.0.1",
+  "description": "AI powerd Job-seeker-Assistant",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Do-not-be-afraid-to-be-knonwn/Job-Seeker-AI-Assistant"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "node-fetch": "^3.3.2",
+    "openai": "^4.104.0",
+    "papaparse": "^5.5.3",
+    "ts-node": "^10.9.2"
+  },
+  "author": "Matthew Hou",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Do-not-be-afraid-to-be-knonwn/Job-Seeker-AI-Assistant"
+  },
+  "homepage": "https://github.com/Do-not-be-afraid-to-be-knonwn/Job-Seeker-AI-Assistant#readme",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
