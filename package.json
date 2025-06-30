@@ -3,15 +3,21 @@
   "version": "0.0.1",
   "description": "AI powerd Job-seeker-Assistant",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node src/scripts/runExtractYears.ts",
+    "dev": "ts-node --watch src/scripts/runExtractYears.ts"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Do-not-be-afraid-to-be-knonwn/Job-Seeker-AI-Assistant"
   },
   "dependencies": {
+    "@langchain/core": "^0.3.61",
+    "@langchain/ollama": "^0.2.3",
     "dotenv": "^16.5.0",
+    "langchain": "^0.3.29",
     "node-fetch": "^3.3.2",
     "openai": "^4.104.0",
     "papaparse": "^5.5.3",
