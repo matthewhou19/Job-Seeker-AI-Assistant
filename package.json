@@ -6,8 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/scripts/runExtractYears.ts",
-    "dev": "ts-node --watch src/scripts/runExtractYears.ts"
+    "start": "ts-node src/scripts/runSmartExtractLevelChain",
+    "dev": "ts-node --watch src/scripts/runSmartExtractLevelChain"
   },
   "repository": {
     "type": "git",
