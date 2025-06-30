@@ -6,7 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/scripts/runSmartExtractLevelChain",
+    "start": "ts-node src/scripts/runExtractDomain.ts",
     "dev": "ts-node --watch src/scripts/runSmartExtractLevelChain"
   },
   "repository": {
