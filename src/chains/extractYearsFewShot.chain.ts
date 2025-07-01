@@ -6,6 +6,6 @@ export async function makeExtractYearsChain() {
   // 1) build your few-shot prompt
   const prompt = await makeExtractYearsFewShotPrompt();
 
-  // 2) wire up the chain
-  return makeChain(prompt as any, YearsSchema);
+  // 2) wire up the chain with monitoring
+  return makeChain(prompt as any, YearsSchema, "extractYears");
 }

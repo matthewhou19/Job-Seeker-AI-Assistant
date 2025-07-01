@@ -7,7 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node src/scripts/runExtractSkills.ts",
-    "dev": "ts-node --watch src/scripts/runExtractSkills.ts"
+    "dev": "ts-node --watch src/scripts/runExtractSkills.ts",
+    "smoke": "ts-node test/smoke/smokeTest.ts",
+    "smoke:local": "ts-node test/smoke/smokeTestLocal.ts"
   },
   "repository": {
     "type": "git",
@@ -18,8 +20,10 @@
     "@langchain/ollama": "^0.2.3",
     "dotenv": "^16.5.0",
     "langchain": "^0.3.29",
+    "langsmith": "^0.3.36",
     "node-fetch": "^3.3.2",
     "openai": "^4.104.0",
+    "openevals": "^0.1.0",
     "papaparse": "^5.5.3",
     "ts-node": "^10.9.2"
   },
