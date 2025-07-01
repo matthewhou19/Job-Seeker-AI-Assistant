@@ -9,7 +9,8 @@
     "start": "ts-node src/scripts/runExtractSkills.ts",
     "dev": "ts-node --watch src/scripts/runExtractSkills.ts",
     "smoke": "ts-node test/smoke/smokeTest.ts",
-    "smoke:local": "ts-node test/smoke/smokeTestLocal.ts"
+    "smoke:local": "ts-node test/smoke/smokeTestLocal.ts",
+    "export-metrics": "ts-node src/scripts/exportMetrics.ts"
   },
   "repository": {
     "type": "git",

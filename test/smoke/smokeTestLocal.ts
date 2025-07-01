@@ -6,16 +6,17 @@ import { makeExtractYearsChain } from "../../src/chains/extractYearsFewShot.chai
 import { makeExtractSkillsChain } from "../../src/chains/extractSkills.chain";
 import { makeSmartExtractLevelChain } from "../../src/chains/smartExtractLevel.chain";
 import { makeExtractDomainChain } from "../../src/chains/extractDomain.chain";
-async function target(inputs: { text: string }) {
+import { ChainPerformanceMonitor } from "../../src/llm/clients";
+async function target(inputs: { text: string }, expectedResults?: any) {
   const yearsChain = await makeExtractYearsChain();
   const levelChain = await makeSmartExtractLevelChain();
   const domainChain = await makeExtractDomainChain();
   const skillsChain = await makeExtractSkillsChain();
 
-  const years = await yearsChain(inputs);
+  const years = await yearsChain(inputs, true, expectedResults?.years);
   const level = await levelChain.call(inputs);
-  const domain = await domainChain(inputs);
-  const skills = await skillsChain(inputs);
+  const domain = await domainChain(inputs, true, expectedResults?.domain);
+  const skills = await skillsChain(inputs, true, expectedResults?.skills);
 
   return {
     ...years,
@@ -45,7 +46,16 @@ async function runLocalSmokeTest() {
     console.log(`\n--- Test ${i + 1}: ${row.job_title} ---`);
 
     try {
-      const result = await target({ text: row.job_description });
+      const expectedResults = {
+        years: row.years_required,
+        domain: row.job_domain,
+        skills: row.technologies_required || [],
+      };
+
+      const result = await target(
+        { text: row.job_description },
+        expectedResults
+      );
 
       // Check years
       const yearsMatch = result.requestYears === row.years_required;
@@ -132,6 +142,11 @@ async function runLocalSmokeTest() {
   console.log(
     "\n✅ Test completed! Performance metrics were logged in real-time above."
   );
+
+  // Export metrics to CSV and clear for next run
+  const monitor = ChainPerformanceMonitor.getInstance();
+  const csvPath = monitor.exportToCSV(undefined, true, true); // append=true, clearAfterExport=true
+  console.log(`📊 Detailed metrics saved to: ${csvPath}`);
 }
 
 // Execute the function
