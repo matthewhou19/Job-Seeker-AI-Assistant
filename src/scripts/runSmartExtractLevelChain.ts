@@ -1,6 +1,6 @@
 import { makeSmartExtractLevelChain } from "../chains/smartExtractLevel.chain";
 
-async function demo() {
+export async function runSmartExtractLevelChain() {
   const chain = await makeSmartExtractLevelChain();
   const text = `
     Title: Platform Engineer
@@ -13,4 +13,4 @@ async function demo() {
   // → { level: "Mid" }  // or whatever comes from explicit/inference
 }
 
-demo();
+runSmartExtractLevelChain();

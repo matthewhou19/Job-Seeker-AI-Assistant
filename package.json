@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node src/scripts/runExtractSkills.ts",
-    "dev": "ts-node --watch src/scripts/demoExtractSkills.ts"
+    "dev": "ts-node --watch src/scripts/runExtractSkills.ts"
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 import { makeExtractDomainChain } from "../chains/extractDomain.chain";
 
-async function demo() {
+export async function runExtractDomainChain() {
   // Instantiate the domain extraction chain
   const chain = await makeExtractDomainChain();
 
@@ -9,10 +9,10 @@ async function demo() {
     "Looking for a Data Scientist with strong skills in machine learning, data analysis, and Python programming.";
 
   // Call the chain and parse the JSON output
-  const result = await chain.invoke({ text: sampleDescription });
+  const result = await chain({ text: sampleDescription });
   const { domain } = result;
 
   console.log("Extracted domain:", domain);
 }
 
-demo().catch(console.error);
+runExtractDomainChain().catch(console.error);

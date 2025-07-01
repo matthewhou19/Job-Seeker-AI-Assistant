@@ -7,18 +7,17 @@ import {
   inferLevelParser,
   makeInferLevelPrompt,
 } from "../prompts/inferLevelPrompt";
-import { OllamaClient } from "../llm/clients";
+import { makeChain, OllamaClient } from "../llm/clients";
+import { LevelSchema } from "../schemas/level.schema";
 
 export async function makeSmartExtractLevelChain() {
   // 1) explicit‐mention chain (title / description)
   const explicitPrompt = await makeExtractLevelFewShotPrompt();
-  const explicitChain = explicitPrompt
-    .pipe(OllamaClient)
-    .pipe(extractLevelParser);
+  const explicitChain = makeChain(explicitPrompt as any, LevelSchema);
 
   // 2) inference chain (when explicit = null)
   const inferPrompt = await makeInferLevelPrompt();
-  const inferChain = inferPrompt.pipe(OllamaClient).pipe(inferLevelParser);
+  const inferChain = makeChain(inferPrompt as any, LevelSchema);
 
   // 3) wrapper with “first do explicit, then infer if needed”
   return {
@@ -27,7 +26,7 @@ export async function makeSmartExtractLevelChain() {
      */
     async call(inputs: { text: string }) {
       // try explicit
-      const explicit = await explicitChain.invoke(inputs);
+      const explicit = await explicitChain(inputs);
 
       if (explicit.level) {
         // found it
@@ -35,7 +34,7 @@ export async function makeSmartExtractLevelChain() {
       }
 
       // fallback to inference
-      const infer = await inferChain.invoke(inputs);
+      const infer = await inferChain(inputs);
       return { text: infer };
     },
   };
