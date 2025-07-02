@@ -2,3 +2,4 @@
 .env
 dist
 /Job-Seeker-AI-Assistant/
+*.csv

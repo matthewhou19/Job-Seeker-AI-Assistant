@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 config(); // Load environment variables from .env file
 
-import { ChainPerformanceMonitor } from "../llm/clients";
+import { ChainPerformanceMonitor } from "../monitor/ChainPerformanceMonitor";
 
 async function exportMetrics() {
   console.log("📊 Exporting chain performance metrics...");

@@ -23,9 +23,9 @@ async function target(inputs: { text: string }) {
 
   return {
     ...years,
-    level: level.text.level,
-    domain: domain.domain,
-    skills: skills.skills,
+    level: level.result.text.level,
+    domain: domain.result.domain,
+    skills: skills.result.skills,
   };
 }
 

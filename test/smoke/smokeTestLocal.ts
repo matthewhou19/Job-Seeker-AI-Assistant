@@ -6,32 +6,24 @@ import { makeExtractYearsChain } from "../../src/chains/extractYearsFewShot.chai
 import { makeExtractSkillsChain } from "../../src/chains/extractSkills.chain";
 import { makeSmartExtractLevelChain } from "../../src/chains/smartExtractLevel.chain";
 import { makeExtractDomainChain } from "../../src/chains/extractDomain.chain";
-import { ChainPerformanceMonitor } from "../../src/llm/clients";
-async function target(inputs: { text: string }, expectedResults?: any) {
+
+async function target(inputs: { text: string }) {
   const yearsChain = await makeExtractYearsChain();
   const levelChain = await makeSmartExtractLevelChain();
   const domainChain = await makeExtractDomainChain();
   const skillsChain = await makeExtractSkillsChain();
 
-  const years = await yearsChain(inputs, true, expectedResults?.years);
-  const level = await levelChain.call(inputs);
-  const domain = await domainChain(inputs, true, expectedResults?.domain);
-  const skills = await skillsChain(inputs, true, expectedResults?.skills);
-
   return {
-    ...years,
-    level: level.text.level,
-    domain: domain.domain,
-    skills: skills.skills,
+    yearsChain,
+    levelChain,
+    domainChain,
+    skillsChain,
   };
 }
 
 async function runLocalSmokeTest() {
   console.log("🚀 Starting local smoke test...");
   console.log(`📊 Testing ${rows.length} job descriptions\n`);
-  console.log(
-    "📈 Performance monitoring is built into each chain - watch for real-time metrics!\n"
-  );
 
   let totalTests = 0;
   let correctYears = 0;
@@ -46,55 +38,52 @@ async function runLocalSmokeTest() {
     console.log(`\n--- Test ${i + 1}: ${row.job_title} ---`);
 
     try {
-      const expectedResults = {
-        years: row.years_required,
-        domain: row.job_domain,
-        skills: row.technologies_required || [],
-      };
-
-      const result = await target(
-        { text: row.job_description },
-        expectedResults
+      const { yearsChain, levelChain, domainChain, skillsChain } = await target(
+        { text: row.job_description }
       );
+      const inputText = { text: row.job_description };
 
-      // Check years
-      const yearsMatch = result.requestYears === row.years_required;
-      if (yearsMatch) correctYears++;
+      // Years
+      const yearsResponse = await yearsChain(inputText, row.years_required);
+      const yearsValidation = yearsResponse.validation;
+      if (yearsValidation?.match) correctYears++;
       console.log(
-        `Years: ${result.requestYears} (expected: ${row.years_required}) ${
-          yearsMatch ? "✅" : "❌"
-        }`
+        `Years: ${yearsValidation?.actual} (expected: ${
+          yearsValidation?.expected
+        }) ${yearsValidation?.match ? "✅" : "❌"}`
       );
 
-      // Check level
-      const levelMatch = result.level === row.title_level;
-      if (levelMatch) correctLevel++;
+      // Level
+      const levelResponse = await levelChain.call(inputText, row.title_level);
+      const levelValidation = levelResponse.validation;
+      if (levelValidation?.match) correctLevel++;
       console.log(
-        `Level: ${result.level} (expected: ${row.title_level}) ${
-          levelMatch ? "✅" : "❌"
-        }`
+        `Level: ${levelValidation?.actual} (expected: ${
+          levelValidation?.expected
+        }) ${levelValidation?.match ? "✅" : "❌"}`
       );
 
-      // Check domain
-      const domainMatch = result.domain === row.job_domain;
-      if (domainMatch) correctDomain++;
+      // Domain
+      const domainResponse = await domainChain(inputText, row.job_domain);
+      const domainValidation = domainResponse.validation;
+      if (domainValidation?.match) correctDomain++;
       console.log(
-        `Domain: ${result.domain} (expected: ${row.job_domain}) ${
-          domainMatch ? "✅" : "❌"
-        }`
+        `Domain: ${domainValidation?.actual} (expected: ${
+          domainValidation?.expected
+        }) ${domainValidation?.match ? "✅" : "❌"}`
       );
 
-      // Check skills (partial match)
+      // Skills
       const expectedSkills = row.technologies_required || [];
-      const actualSkills = result.skills || [];
-      const skillsMatch =
-        JSON.stringify(actualSkills.sort()) ===
-        JSON.stringify(expectedSkills.sort());
-      if (skillsMatch) correctSkills++;
+      const skillsResponse = await skillsChain(inputText, expectedSkills);
+      const skillsValidation = skillsResponse.validation;
+      if (skillsValidation?.match) correctSkills++;
       console.log(
-        `Skills: [${actualSkills.join(", ")}] (expected: [${expectedSkills.join(
+        `Skills: [${skillsValidation?.actual.join(
           ", "
-        )}]) ${skillsMatch ? "✅" : "❌"}`
+        )}] (expected: [${skillsValidation?.expected.join(", ")}]) ${
+          skillsValidation?.match ? "✅" : "❌"
+        }`
       );
 
       totalTests++;
@@ -138,15 +127,6 @@ async function runLocalSmokeTest() {
   ).toFixed(1);
   console.log(`\n🎯 Overall Accuracy: ${overallAccuracy}%`);
   console.log(`⏱️  Total Test Duration: ${totalDuration}ms`);
-
-  console.log(
-    "\n✅ Test completed! Performance metrics were logged in real-time above."
-  );
-
-  // Export metrics to CSV and clear for next run
-  const monitor = ChainPerformanceMonitor.getInstance();
-  const csvPath = monitor.exportToCSV(undefined, true, true); // append=true, clearAfterExport=true
-  console.log(`📊 Detailed metrics saved to: ${csvPath}`);
 }
 
 // Execute the function
