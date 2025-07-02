@@ -1,6 +1,26 @@
 import { writeFileSync, readFileSync, existsSync } from "fs";
 import { join } from "path";
 
+function csvSafe(val: any): string {
+  if (Array.isArray(val)) {
+    // Join array with pipe, and escape any internal pipes and quotes
+    return (
+      '"' +
+      val
+        .map((v) => String(v).replace(/"/g, '""').replace(/\|/g, "||"))
+        .join("|") +
+      '"'
+    );
+  }
+  if (typeof val === "object" && val !== null) {
+    return '"' + JSON.stringify(val).replace(/"/g, '""') + '"';
+  }
+  if (typeof val === "string") {
+    return '"' + val.replace(/"/g, '""') + '"';
+  }
+  return String(val ?? "");
+}
+
 class ChainPerformanceMonitor {
   private static instance: ChainPerformanceMonitor;
   private callHistory: Array<{
@@ -145,8 +165,8 @@ class ChainPerformanceMonitor {
       call.success,
       call.isFromTest,
       call.testMatch,
-      call.testExpected ? JSON.stringify(call.testExpected) : "",
-      call.testActual ? JSON.stringify(call.testActual) : "",
+      csvSafe(call.testExpected),
+      csvSafe(call.testActual),
     ].join(",");
     if (!existsSync(filePath)) {
       writeFileSync(filePath, [csvHeader, csvRow].join("\n"), "utf8");
@@ -282,8 +302,8 @@ class ChainPerformanceMonitor {
         call.success,
         call.isFromTest,
         call.testMatch,
-        call.testExpected ? JSON.stringify(call.testExpected) : "",
-        call.testActual ? JSON.stringify(call.testActual) : "",
+        csvSafe(call.testExpected),
+        csvSafe(call.testActual),
       ].join(",");
     });
     const filePath = join(process.cwd(), finalFilename);
