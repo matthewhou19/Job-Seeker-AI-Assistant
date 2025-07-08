@@ -33,7 +33,7 @@ async function runLocalSmokeTest() {
 
   const startTime = Date.now();
 
-  for (let i = 0; i < Math.min(5, rows.length); i++) {
+  for (let i = 0; i < Math.min(20, rows.length); i++) {
     const row = rows[i];
     console.log(`\n--- Test ${i + 1}: ${row.job_title} ---`);
 

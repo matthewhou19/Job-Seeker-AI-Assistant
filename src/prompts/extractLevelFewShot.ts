@@ -24,6 +24,10 @@ const examples = [
     input: "Platform Engineer",
     output: `{{"level":null}}`,
   },
+  {
+    input: "Front-end Engineer",
+    output: `{{"level":null}}`,
+  },
 ];
 
 // 3) Formatter for each example

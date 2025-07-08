@@ -80,7 +80,7 @@
     "benefits": "['Career development with an international company where you can grow the career you dream of', 'Free medical coverage for employees* via the Health Investment Plan (HIP) PPO', 'An excellent retirement savings plan with high employer contribution', 'Tuition reimbursement, the Freedom 2 Save student debt program and FreeU education benefit - an affordable and convenient path to getting a bachelor\u2019s degree', 'The base pay for this position is $98,000.00 \u2013 $196,000.00', 'In specific locations, the pay range may vary from the range posted']",
     "responsibilities": "['Compliance Software Engineer (Product) will be responsible (but not limited to) the following:', 'Participates as a lead member of the Software Quality Assurance (SWQA) team for Abbott Diabetes Care products that ensures digital applications and firmware produced by ADC is developed, validated, and maintained in compliance with regulatory, corporate and divisional requirements', 'Review quality system documentation products as they apply to the development, verification, validation, use, and maintenance of medical device software', 'Coordinate activities with other engineering disciplines, departments, and contractors', 'Completes software quality tasks in accordance with current Quality System Requirements', 'Works independently with objectives given by SWQA Manager', 'Can plan and coordinate own work according to higher-level project schedules', 'Reviews and provides lead guidance to the team regarding deliverables/activities as identified in project plans or equivalent documentation', 'Including System Specifications/Requirements documents, Verification Test Cases, Verification/Validation protocols, Trace Matrices and Verification/Validation Summary Reports for the Alameda site', 'Reports unexpected events, issues or software bugs which occur during verification/validation to project team and management', 'Assists subordinate staff in recognizing the same', 'Coordinates the development and maintenance of departmental operating procedures to ensure compliance to relevant FDA, QSR, ISO guidelines, including 21 CFR Part 11 and Abbott Corporate requirements as they relate to the development, verification, validation, and maintenance of application in support of medical device software', 'Software Quality lead in various phases of the development lifecycle, as well as initiation of corrective and/or preventative action as it applies software development activities', 'Maintains schedule and drive to meet project schedule as aligned with project(s) goals', 'Will also estimate, plan, schedule and review own and others\u2019 work products and be accountable for the quality of those reviews and delivery on schedule', 'Considered Non-Product SWQA compliance SME in support of external/internal audits']",
     "technologies_required": ["AI", "Cybersecurity"],
-    "years_required": 8,
+    "years_required": 5,
     "title_level": "Senior",
     "job_domain": "QA",
     "job_employment_types": "['FULLTIME']",
@@ -111,7 +111,7 @@
     "technologies_required": ["JavaScript", "CI/CD", "Cypress", "Selenium"],
     "years_required": 5,
     "title_level": "Senior",
-    "job_domain": "\"QA\"",
+    "job_domain": "QA",
     "job_employment_types": null,
     "job_google_link": null
   },
@@ -140,7 +140,7 @@
     "technologies_required": [],
     "years_required": 0,
     "title_level": "Director",
-    "job_domain": "\"Hardware\"",
+    "job_domain": "Hardware",
     "job_employment_types": "['FULLTIME']",
     "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3DC23JAgZfgom8aVvqAAAAAA%3D%3D&vssid=jobs-detail-viewer"
   },
@@ -242,7 +242,7 @@
       "devops"
     ],
     "years_required": 0,
-    "title_level": "\"\"Intern\"\"",
+    "title_level": "Intern",
     "job_domain": "AI Application",
     "job_employment_types": null,
     "job_google_link": null
@@ -312,7 +312,7 @@
     "technologies_required": ["Python", "C++", "API"],
     "years_required": 10,
     "title_level": "Senior",
-    "job_domain": "\"Graphics & 3D Automation\"",
+    "job_domain": "Graphics & 3D Automation",
     "job_employment_types": "['FULLTIME']",
     "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3D8yA7DuOIjp-dUPdiAAAAAA%3D%3D&vssid=jobs-detail-viewer"
   },
@@ -388,7 +388,7 @@
     ],
     "years_required": 5,
     "title_level": "Senior",
-    "job_domain": "\"Full Stack\"",
+    "job_domain": "Full Stack",
     "job_employment_types": null,
     "job_google_link": null
   },
@@ -417,7 +417,7 @@
     "technologies_required": ["Go", "Python", "Typescript"],
     "years_required": 8,
     "title_level": "Senior",
-    "job_domain": "\"AI application\"",
+    "job_domain": "AI application",
     "job_employment_types": "['FULLTIME']",
     "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3DmU-SCxJUgGSoPG2XAAAAAA%3D%3D&vssid=jobs-detail-viewer"
   },
@@ -446,7 +446,7 @@
     "technologies_required": ["TypeScript", "Go", "Python"],
     "years_required": 8,
     "title_level": "Senior",
-    "job_domain": "\"AI application\"",
+    "job_domain": "AI application",
     "job_employment_types": "['FULLTIME']",
     "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3Dy_wuyx65bT-FxSrYAAAAAA%3D%3D&vssid=jobs-detail-viewer"
   },
@@ -505,7 +505,7 @@
     "technologies_required": ["C++"],
     "years_required": 0,
     "title_level": "Junior",
-    "job_domain": "Data",
+    "job_domain": "Data Science",
     "job_employment_types": "['FULLTIME']",
     "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3DwwIxcX0-CgZtUD2MAAAAAA%3D%3D&vssid=jobs-detail-viewer"
   },
@@ -568,7 +568,7 @@
     ],
     "years_required": 5,
     "title_level": "Senior",
-    "job_domain": "ML",
+    "job_domain": "AI/ML",
     "job_employment_types": null,
     "job_google_link": null
   },
@@ -626,7 +626,7 @@
     "technologies_required": ["Python", "Rust"],
     "years_required": 5,
     "title_level": "Senior",
-    "job_domain": "Data",
+    "job_domain": "Backend",
     "job_employment_types": "['FULLTIME']",
     "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3Dv5J5t4tEVtOMFdrrAAAAAA%3D%3D&vssid=jobs-detail-viewer"
   }

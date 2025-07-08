@@ -2,11 +2,28 @@ import { z } from "zod";
 
 export const DomainSchema = z.object({
   /**
-   * The primary job domain or field—e.g. “Software Engineering”,
-   * “Data Science”, “UX/UI Design”, etc.,
-   * as a concise summary of the description.
+   * The primary job domain or field from the predefined list of technical domains.
+   * Choose the most specific domain that best describes the job's primary focus.
    */
-  domain: z.string().nullable(),
+  domain: z
+    .enum([
+      "Backend",
+      "Frontend",
+      "Full Stack",
+      "Mobile",
+      "DevOps",
+      "Embedded",
+      "AI/ML",
+      "Data Science",
+      "QA",
+      "Security",
+      "Healthcare",
+      "Finance",
+      "E-commerce",
+      "Gaming",
+      "Hardware",
+    ])
+    .nullable(),
 });
 
 export type Domain = z.infer<typeof DomainSchema>;
