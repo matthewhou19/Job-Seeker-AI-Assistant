@@ -21,6 +21,17 @@ export async function makeInferLevelPrompt() {
 Based on the following job **description**, pick the best-fit level from:
 ["Intern","Entry","Junior","Mid","Senior","Lead","Manager","Director","Executive"].
 
+Level Criteria:
+- Intern: Students/recent graduates, no experience required, learning on the job
+- Entry: 0-1 years experience, basic skills, supervised work
+- Junior: 1-2 years experience, some independence, basic mentoring
+- Mid: 3-4 years experience, works independently, may mentor juniors, handles complex tasks
+- Senior: 5-7 years experience, leads technical decisions, mentors others, handles architecture
+- Lead: 5-8 years experience, leads small teams (2-5 people), technical leadership
+- Manager:  manages multiple teams, people management focus
+- Director: 10+ years experience, oversees departments, strategic planning
+- Executive: 15+ years experience, C-level positions, company-wide decisions
+
 Here are some examples:
 
 Example 1:
@@ -32,18 +43,22 @@ Description: "Seeking a developer with 1-2 years of experience. Knowledge of bas
 Level: Junior
 
 Example 3:
-Description: "We need someone with 3-5 years of experience who can work independently and mentor junior developers."
-Level: Senior
+Description: "We need someone with 3-4 years of experience who can work independently on complex features."
+Level: Mid
 
 Example 4:
+Description: "We need someone with 5-7 years of experience who can work independently and mentor junior developers."
+Level: Senior
+
+Example 5:
 Description: "Leading a team of 5-10 engineers. Responsible for technical decisions and project planning."
 Level: Lead
 
-Example 5:
+Example 6:
 Description: "Managing multiple teams and departments. Strategic planning and budget responsibility."
 Level: Manager
 
-Example 6:
+Example 7:
 Description: "Overseeing all engineering operations. Reporting to CTO. 10+ years experience required."
 Level: Director
 

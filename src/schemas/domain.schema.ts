@@ -13,7 +13,7 @@ export const DomainSchema = z.object({
       "Mobile",
       "DevOps",
       "Embedded",
-      "AI/ML",
+      "ML",
       "Data Science",
       "QA",
       "Security",

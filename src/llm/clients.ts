@@ -69,7 +69,8 @@ export const GeminiClient = new GeminiCLI();
 export function makeChain<T>(
   prompt: PromptTemplate,
   schema: z.ZodType<T>,
-  chainName?: string
+  chainName?: string,
+  skipValidation = false
 ) {
   const monitor = ChainPerformanceMonitor.getInstance();
   const finalChainName = chainName;
@@ -137,8 +138,8 @@ export function makeChain<T>(
         const result = await mainChain.invoke(input);
         console.log(`Chain succeeded:`, result);
 
-        // Validate if this is a test
-        if (isFromTest && finalChainName) {
+        // Validate if this is a test and validation is not skipped
+        if (isFromTest && !skipValidation && finalChainName) {
           const validator = ValidatorFactory.create(finalChainName);
           const validation = validator.validate(
             finalChainName,
@@ -156,8 +157,8 @@ export function makeChain<T>(
           const result = await fallbackChain.invoke(input);
           console.log(`Fallback chain succeeded:`, result);
 
-          // Validate if this is a test
-          if (isFromTest && finalChainName) {
+          // Validate if this is a test and validation is not skipped
+          if (isFromTest && !skipValidation && finalChainName) {
             const validator = ValidatorFactory.create(finalChainName);
             const validation = validator.validate(
               finalChainName,
@@ -185,9 +186,9 @@ export function makeChain<T>(
       const result = await mainChain.invoke(input);
       console.log(`${finalChainName} chain succeeded:`, result);
 
-      // Validate if this is a test
+      // Validate if this is a test and validation is not skipped
       let validation = null;
-      if (isFromTest) {
+      if (isFromTest && !skipValidation) {
         const validator = ValidatorFactory.create(finalChainName);
         validation = validator.validate(
           finalChainName,
@@ -221,9 +222,9 @@ export function makeChain<T>(
         const result = await fallbackChain.invoke(input);
         console.log(`${finalChainName} fallback chain succeeded:`, result);
 
-        // Validate if this is a test
+        // Validate if this is a test and validation is not skipped
         let validation = null;
-        if (isFromTest) {
+        if (isFromTest && !skipValidation) {
           const validator = ValidatorFactory.create(finalChainName);
           validation = validator.validate(
             finalChainName,

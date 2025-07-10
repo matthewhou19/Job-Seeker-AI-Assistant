@@ -6,6 +6,6 @@ export async function makeExtractSkillsChain() {
   // 1) build your prompt
   const prompt = await makeExtractSkillsPrompt();
 
-  // 2) wire up the chain with monitoring
-  return makeChain(prompt as any, SkillsSchema, "extractSkills");
+  // 2) wire up the chain with monitoring and optimized validation
+  return makeChain(prompt as any, SkillsSchema, "extractSkills", false);
 }

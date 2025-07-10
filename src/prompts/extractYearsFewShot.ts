@@ -36,6 +36,26 @@ const examples = [
       "qualifications: 3+ years of non-internship professional front end, web or mobile software development using JavaScript, HTML and CSS experience 3+ years of computer science fundamentals (object-oriented design, data structures, algorithm design, problem solving and complexity analysis) experience。 Experience with object-oriented design.Experience using JavaScript frameworks such as angular and react.Preferred Qualifications 1+ years of agile software development methodology experience Experience building scalable, distributed, front-end experiences",
     output: `{{"requestYears":3}}`,
   },
+  {
+    input:
+      "4+ years of non-internship design or architecture (design patterns, reliability and scaling) of new and existing systems experience', '4+ years of non-internship professional software development experience,Preferred Qualifications 3+ years of full software development life cycle, including coding standards, code reviews, source control management, build processes, testing, and operations experience",
+    output: `{{"requestYears":4}}`,
+  },
+  {
+    input:
+      "8+ years of consistent track record as a data engineer, 3+ years of experience with mobile data, 5+ years of experience with distributed data technologies, 2+ years of experience with cloud-based technologies",
+    output: `{{"requestYears":8}}`,
+  },
+  {
+    input:
+      "Senior Software Engineer: 7+ years of software development experience, 3+ years of cloud experience, 2+ years of team leadership",
+    output: `{{"requestYears":7}}`,
+  },
+  {
+    input:
+      "Lead Developer: 10+ years of experience required, 5+ years in Java, 3+ years in cloud technologies",
+    output: `{{"requestYears":10}}`,
+  },
 ];
 
 // 3) How to format each example
@@ -54,7 +74,15 @@ export async function makeExtractYearsFewShotPrompt() {
   return new FewShotPromptTemplate({
     examplePrompt,
     examples,
-    prefix: `You are a JSON job posting analyzer.  For each "Input", produce exactly this schema (no extra keys, no prose), if the input does not contain a number of years, return 0:
+    prefix: `You are a JSON job posting analyzer. Extract the primary years of experience required from job postings.
+
+Rules:
+- If multiple years are mentioned, extract the HIGHEST number (most senior requirement)
+- If no years are mentioned, return 0
+- Focus on the main/primary experience requirement, not secondary or preferred qualifications
+- For ranges like "3-5 years", extract the minimum (3)
+
+For each "Input", produce exactly this schema (no extra keys, no prose):
 ${escapedFormatInstructions}
 
 Here are some examples:

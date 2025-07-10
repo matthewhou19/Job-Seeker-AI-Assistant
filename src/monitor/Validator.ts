@@ -42,7 +42,7 @@ export class ExactMatchValidator implements Validator {
   }
 }
 
-// Partial match validator for skills (array comparison)
+// Optimized skills validator using Set for O(1) lookups with partial matching
 export class SkillsValidator implements Validator {
   validate(
     chainName: string,
@@ -53,14 +53,37 @@ export class SkillsValidator implements Validator {
     const actualSkills = actual?.skills || [];
     const expectedSkills = expected || [];
 
-    // Check if all expected skills are contained within actual skills
-    const match = expectedSkills.every((expectedSkill: string) =>
-      actualSkills.some(
-        (actualSkill: string) =>
-          actualSkill.toLowerCase().includes(expectedSkill.toLowerCase()) ||
-          expectedSkill.toLowerCase().includes(actualSkill.toLowerCase())
-      )
+    // Pre-process actual skills once - O(n)
+    const normalizedActualSkills = new Set<string>(
+      actualSkills.map((skill: string) => skill.toLowerCase())
     );
+
+    // Create a more flexible matching function
+    const findMatchingSkill = (expectedSkill: string): boolean => {
+      const normalizedExpected = expectedSkill.toLowerCase();
+
+      // Exact match first
+      if (normalizedActualSkills.has(normalizedExpected)) {
+        return true;
+      }
+
+      // Partial match - check if any actual skill contains the expected skill
+      for (const actualSkill of normalizedActualSkills) {
+        if (
+          actualSkill.includes(normalizedExpected) ||
+          normalizedExpected.includes(actualSkill)
+        ) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    // Check each expected skill - O(m) where m = expected skills
+    const match = expectedSkills.every((expectedSkill: string) => {
+      return findMatchingSkill(expectedSkill);
+    });
 
     if (isFromTest) {
       const monitor = ChainPerformanceMonitor.getInstance();
@@ -135,8 +158,35 @@ export class LevelValidator implements Validator {
   }
 }
 
-// Domain validator (string comparison with mapping)
+// Optimized domain validator with static mapping
 export class DomainValidator implements Validator {
+  // Static mapping for better performance
+  private static readonly domainMapping = new Map([
+    ["ML", "ML"],
+    ["AI", "ML"],
+    ["Data Science", "Data Science"],
+    ["Data", "Data Science"],
+    ["Software Engineering", "Full Stack"],
+    ["Web Development", "Full Stack"],
+    ["Mobile Development", "Mobile"],
+    ["Backend Development", "Backend"],
+    ["Frontend Development", "Frontend"],
+    ["Quality Assurance", "QA"],
+    ["Testing", "QA"],
+    ["Cybersecurity", "Security"],
+    ["Information Security", "Security"],
+    ["Medical Devices", "Healthcare"],
+    ["Biotechnology", "Healthcare"],
+    ["Financial Services", "Finance"],
+    ["Banking", "Finance"],
+    ["E-commerce", "E-commerce"],
+    ["Online Retail", "E-commerce"],
+    ["Video Games", "Gaming"],
+    ["Game Development", "Gaming"],
+    ["Semiconductor", "Hardware"],
+    ["Electronics", "Hardware"],
+  ]);
+
   validate(
     chainName: string,
     actual: any,
@@ -146,35 +196,9 @@ export class DomainValidator implements Validator {
     const actualDomain = actual?.domain;
     const expectedDomain = expected;
 
-    // Domain mapping for test data compatibility
-    const domainMapping: { [key: string]: string } = {
-      ML: "AI/ML",
-      AI: "AI/ML",
-      "Data Science": "Data Science",
-      Data: "Data Science",
-      "Software Engineering": "Full Stack",
-      "Web Development": "Full Stack",
-      "Mobile Development": "Mobile",
-      "Backend Development": "Backend",
-      "Frontend Development": "Frontend",
-      "Quality Assurance": "QA",
-      Testing: "QA",
-      Cybersecurity: "Security",
-      "Information Security": "Security",
-      "Medical Devices": "Healthcare",
-      Biotechnology: "Healthcare",
-      "Financial Services": "Finance",
-      Banking: "Finance",
-      "E-commerce": "E-commerce",
-      "Online Retail": "E-commerce",
-      "Video Games": "Gaming",
-      "Game Development": "Gaming",
-      Semiconductor: "Hardware",
-      Electronics: "Hardware",
-    };
-
-    // Map expected domain if it exists in mapping
-    const mappedExpected = domainMapping[expectedDomain] || expectedDomain;
+    // Use Map.get() for O(1) lookup
+    const mappedExpected =
+      DomainValidator.domainMapping.get(expectedDomain) || expectedDomain;
     const match = actualDomain === mappedExpected;
 
     if (isFromTest) {
@@ -192,20 +216,42 @@ export class DomainValidator implements Validator {
   }
 }
 
-// Validator factory
+// Optimized validator factory with caching
 export class ValidatorFactory {
+  private static validators = new Map<string, Validator>();
+
   static create(chainName: string): Validator {
+    // Return cached validator if it exists
+    if (this.validators.has(chainName)) {
+      return this.validators.get(chainName)!;
+    }
+
+    // Create new validator and cache it
+    let validator: Validator;
     switch (chainName) {
       case "extractSkills":
-        return new SkillsValidator();
+        validator = new SkillsValidator();
+        break;
       case "extractYears":
-        return new YearsValidator();
+        validator = new YearsValidator();
+        break;
       case "extractLevel":
-        return new LevelValidator();
+        validator = new LevelValidator();
+        break;
       case "extractDomain":
-        return new DomainValidator();
+        validator = new DomainValidator();
+        break;
       default:
-        return new ExactMatchValidator();
+        validator = new ExactMatchValidator();
     }
+
+    // Cache the validator for future use
+    this.validators.set(chainName, validator);
+    return validator;
+  }
+
+  // Method to clear cache if needed
+  static clearCache(): void {
+    this.validators.clear();
   }
 }
