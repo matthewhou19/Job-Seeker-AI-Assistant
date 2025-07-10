@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Indeed Job Info Extractor",
+  "version": "1.0",
+  "permissions": ["scripting", "activeTab"],
+  "host_permissions": ["https://*.indeed.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://*.indeed.com/*"],
+      "js": ["contentScript.js"]
+    }
+  ]
+}

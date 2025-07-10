@@ -19,7 +19,10 @@
   "dependencies": {
     "@langchain/core": "^0.3.61",
     "@langchain/ollama": "^0.2.3",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
+    "express": "^5.1.0",
     "langchain": "^0.3.29",
     "langsmith": "^0.3.36",
     "node-fetch": "^3.3.2",
@@ -35,6 +38,9 @@
   },
   "homepage": "https://github.com/Do-not-be-afraid-to-be-knonwn/Job-Seeker-AI-Assistant#readme",
   "devDependencies": {
+    "@types/body-parser": "^1.19.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
     "typescript": "^5.8.3"
   }
 }
