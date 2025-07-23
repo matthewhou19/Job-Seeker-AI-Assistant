@@ -21,102 +21,102 @@ const examples = [
   {
     input:
       "Frontend React developer needed to create responsive user interfaces. Experience with TypeScript, CSS, and modern web technologies required.",
-    output: `{"domain":"Frontend"}`,
+    output: `{{"domain":"Frontend"}}`,
   },
   {
     input:
       "Full stack developer to work on both client and server-side code. Must know React, Node.js, and database design.",
-    output: `{"domain":"Full Stack"}`,
+    output: `{{"domain":"Full Stack"}}`,
   },
   {
     input:
       "Full stack engineer to build web applications from database to UI. Experience with React, Python, Django, and PostgreSQL required.",
-    output: `{"domain":"Full Stack"}`,
+    output: `{{"domain":"Full Stack"}}`,
   },
   {
     input:
       "Software engineer to develop complete web applications. Must work on frontend, backend, and database layers.",
-    output: `{"domain":"Full Stack"}`,
+    output: `{{"domain":"Full Stack"}}`,
   },
   {
     input:
       "AI startup looking for a Software Engineer to build innovative AI features with design and front-end teams. Translate user needs into scalable back-end systems. Integrate advanced AI capabilities into core products.",
-    output: `{"domain":"Full Stack"}`,
+    output: `{{"domain":"Full Stack"}}`,
   },
   {
     input:
       "Full stack developer to build AI-powered applications. Work on both frontend and backend while integrating machine learning APIs and AI features.",
-    output: `{"domain":"Full Stack"}`,
+    output: `{{"domain":"Full Stack"}}`,
   },
   {
     input:
       "Software Engineer to help drive user-facing product development and scale AI infrastructure. Build and iterate on innovative AI features with design and front-end teams. Translate user needs into scalable back-end systems.",
-    output: `{"domain":"Full Stack"}`,
+    output: `{{"domain":"Full Stack"}}`,
   },
   {
     input:
       "iOS developer to build mobile apps using Swift and UIKit. Experience with Core Data and iOS frameworks required.",
-    output: `{"domain":"Mobile"}`,
+    output: `{{"domain":"Mobile"}}`,
   },
   {
     input:
       "DevOps engineer to manage AWS infrastructure, implement CI/CD pipelines, and ensure system reliability.",
-    output: `{"domain":"DevOps"}`,
+    output: `{{"domain":"DevOps"}}`,
   },
   {
     input:
       "Embedded systems engineer to develop firmware for IoT devices. Experience with C/C++ and real-time systems required.",
-    output: `{"domain":"Embedded"}`,
+    output: `{{"domain":"Embedded"}}`,
   },
   {
     input:
       "Machine learning engineer to develop and train neural networks using TensorFlow and PyTorch. Experience with deep learning model training and optimization required.",
-    output: `{"domain":"ML"}`,
+    output: `{{"domain":"ML"}}`,
   },
   {
     input:
       "Data scientist to analyze large datasets and build predictive models. Experience with Python, R, and statistical modeling required.",
-    output: `{"domain":"Data Science"}`,
+    output: `{{"domain":"Data Science"}}`,
   },
   {
     input:
       "Data analyst to perform statistical analysis and create data visualizations. Experience with SQL, Python, and business intelligence tools required.",
-    output: `{"domain":"Data Science"}`,
+    output: `{{"domain":"Data Science"}}`,
   },
   {
     input:
       "QA engineer to develop automated test suites and ensure software quality. Experience with Selenium and test automation required.",
-    output: `{"domain":"QA"}`,
+    output: `{{"domain":"QA"}}`,
   },
   {
     input:
       "Security engineer to implement authentication systems and protect against cyber threats. Experience with OAuth and encryption required.",
-    output: `{"domain":"Security"}`,
+    output: `{{"domain":"Security"}}`,
   },
   {
     input:
       "Financial systems developer to build trading platforms and payment processing systems. Experience with fintech and compliance required.",
-    output: `{"domain":"Finance"}`,
+    output: `{{"domain":"Finance"}}`,
   },
   {
     input:
       "E-commerce developer to build online shopping platforms and payment systems. Experience with Shopify and payment gateways required.",
-    output: `{"domain":"E-commerce"}`,
+    output: `{{"domain":"E-commerce"}}`,
   },
   {
     input:
       "Game developer to create video games using Unity or Unreal Engine. Experience with game physics and 3D graphics required.",
-    output: `{"domain":"Gaming"}`,
+    output: `{{"domain":"Gaming"}}`,
   },
   {
     input:
       "Hardware engineer to design semiconductor circuits and electronic systems. Experience with PCB design and VHDL required.",
-    output: `{"domain":"Hardware"}`,
+    output: `{{"domain":"Hardware"}}`,
   },
   {
     input:
       "Software engineer to work on various projects. General programming skills required.",
-    output: `{"domain":null}`,
+    output: `{{"domain":null}}`,
   },
 ];
 
@@ -126,17 +126,17 @@ const examplePrompt = PromptTemplate.fromTemplate(
 Domain: {output}`
 );
 
-/**
- * Factory to create a simple PromptTemplate that asks the model
- * to categorize the job's domain from its description.
- */
+// 4) Factory to create a FewShotPromptTemplate
 export async function makeExtractDomainPrompt() {
   const formatInstructions = await extractDomainParser.getFormatInstructions();
   // Escape curly braces to avoid template parsing errors
   const escapedFormatInstructions = formatInstructions
     .replace(/\{/g, "{{")
     .replace(/\}/g, "}}");
-  return PromptTemplate.fromTemplate(`You are an expert at categorizing job postings into specific technical domains.
+  return new FewShotPromptTemplate({
+    examplePrompt,
+    examples,
+    prefix: `You are an expert at categorizing job postings into specific technical domains.
 
 Available domains:
 - Backend: Server-side development, APIs, databases, infrastructure
@@ -163,7 +163,11 @@ Do not wrap the output in any extra keys or prose.
 Respond with exactly this JSON schema (no extra keys, no prose):
 ${escapedFormatInstructions}
 
-Now categorize this job posting into the most appropriate domain:
+Here are some examples:
+`,
+    suffix: `Now categorize this job posting into the most appropriate domain:
 Job Description: {text}
-Domain:`);
+Domain:`,
+    inputVariables: ["text"],
+  });
 }
