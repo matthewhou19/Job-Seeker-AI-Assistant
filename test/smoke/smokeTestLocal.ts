@@ -45,7 +45,7 @@ async function runLocalSmokeTest() {
 
       // Years
       const yearsResponse = await yearsChain(inputText, row.years_required);
-      const yearsValidation = yearsResponse.validation;
+      const yearsValidation = yearsResponse?.validation;
       if (yearsValidation?.match) correctYears++;
       console.log(
         `Years: ${yearsValidation?.actual} (expected: ${
@@ -55,7 +55,7 @@ async function runLocalSmokeTest() {
 
       // Level
       const levelResponse = await levelChain.call(inputText, row.title_level);
-      const levelValidation = levelResponse.validation;
+      const levelValidation = levelResponse?.validation;
       if (levelValidation?.match) correctLevel++;
       console.log(
         `Level: ${levelValidation?.actual} (expected: ${
@@ -65,10 +65,10 @@ async function runLocalSmokeTest() {
 
       // Domain
       const domainResponse = await domainChain(inputText, row.job_domain);
-      const domainValidation = domainResponse.validation;
+      const domainValidation = domainResponse?.validation;
       if (domainValidation?.match) correctDomain++;
       console.log(
-        `Domain: ${domainValidation?.actual} (expected: ${
+        `Domains: [${domainValidation?.actual.join(", ")}] (expected: ${
           domainValidation?.expected
         }) ${domainValidation?.match ? "✅" : "❌"}`
       );
@@ -76,7 +76,7 @@ async function runLocalSmokeTest() {
       // Skills
       const expectedSkills = row.technologies_required || [];
       const skillsResponse = await skillsChain(inputText, expectedSkills);
-      const skillsValidation = skillsResponse.validation;
+      const skillsValidation = skillsResponse?.validation;
       if (skillsValidation?.match) correctSkills++;
       console.log(
         `Skills: [${skillsValidation?.actual.join(

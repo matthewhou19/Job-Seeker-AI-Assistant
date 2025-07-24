@@ -193,25 +193,27 @@ export class DomainValidator implements Validator {
     expected: any,
     isFromTest: boolean
   ): ValidationResult {
-    const actualDomain = actual?.domain;
+    const actualDomains = actual?.domains || [];
     const expectedDomain = expected;
 
     // Use Map.get() for O(1) lookup
     const mappedExpected =
       DomainValidator.domainMapping.get(expectedDomain) || expectedDomain;
-    const match = actualDomain === mappedExpected;
+    
+    // Check if the expected domain is in the actual domains array
+    const match = actualDomains.includes(mappedExpected);
 
     if (isFromTest) {
       const monitor = ChainPerformanceMonitor.getInstance();
-      monitor.recordValidation(chainName, actualDomain, mappedExpected, match);
+      monitor.recordValidation(chainName, actualDomains, mappedExpected, match);
     }
 
     return {
       success: true,
       expected: mappedExpected,
-      actual: actualDomain,
+      actual: actualDomains,
       match,
-      details: match ? "Domain matches" : "Domain does not match",
+      details: match ? "Domain found in domains array" : "Domain not found in domains array",
     };
   }
 }

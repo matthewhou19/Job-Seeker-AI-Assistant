@@ -24,7 +24,7 @@ async function target(inputs: { text: string }) {
   return {
     ...years,
     level: level.result.text.level,
-    domain: domain.result.domain,
+    domains: domain.result.domains,
     skills: skills.result.skills,
   };
 }
@@ -83,12 +83,15 @@ async function runSmokeTest() {
 
   const domainEvaluator = new StringEvaluator({
     inputKey: "text",
-    predictionKey: "domain",
+    predictionKey: "domains",
     gradingFunction: async (params: any) => {
-      const isCorrect = params.prediction.domain === params.reference.domain;
+      // Check if the expected domain is in the predicted domains array
+      const expectedDomain = params.reference.domains;
+      const predictedDomains = params.prediction.domains || [];
+      const isCorrect = predictedDomains.includes(expectedDomain);
       return {
         score: isCorrect ? 1 : 0,
-        reasoning: isCorrect ? "Exact match" : "Mismatch",
+        reasoning: isCorrect ? "Expected domain found in domains array" : "Expected domain not found in domains array",
       };
     },
   });

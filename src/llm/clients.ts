@@ -134,34 +134,19 @@ export function makeChain<T>(
     // Skip monitoring if no chain name provided
     if (!finalChainName) {
       console.log(`About to call chain...`);
-      try {
-        const result = await mainChain.invoke(input);
-        console.log(`Chain succeeded:`, result);
-
-        // Validate if this is a test and validation is not skipped
-        if (isFromTest && !skipValidation && finalChainName) {
-          const validator = ValidatorFactory.create(finalChainName);
-          const validation = validator.validate(
-            finalChainName,
-            result,
-            testExpected,
-            true
-          );
-          return { result, validation };
-        }
-
-        return { result };
-      } catch (error) {
-        console.log(`Main chain failed, trying fallback...`, error);
+      
+      // Try main chain up to 3 times
+      for (let attempt = 1; attempt <= 3; attempt++) {
         try {
-          const result = await fallbackChain.invoke(input);
-          console.log(`Fallback chain succeeded:`, result);
+          console.log(`Attempt ${attempt}/3 with main chain...`);
+          const result = await mainChain.invoke(input);
+          console.log(`Chain succeeded on attempt ${attempt}:`, result);
 
           // Validate if this is a test and validation is not skipped
-          if (isFromTest && !skipValidation && finalChainName) {
-            const validator = ValidatorFactory.create(finalChainName);
+          if (isFromTest && !skipValidation) {
+            const validator = ValidatorFactory.create("unknown");
             const validation = validator.validate(
-              finalChainName,
+              "unknown",
               result,
               testExpected,
               true
@@ -170,71 +155,62 @@ export function makeChain<T>(
           }
 
           return { result };
-        } catch (fallbackError) {
-          console.log(`Fallback chain also failed:`, fallbackError);
-          throw fallbackError;
+        } catch (error) {
+          console.log(`Main chain attempt ${attempt} failed:`, error);
+          if (attempt === 3) {
+            console.log(`All 3 main chain attempts failed, trying fallback...`);
+            try {
+              const result = await fallbackChain.invoke(input);
+              console.log(`Fallback chain succeeded:`, result);
+
+              // Validate if this is a test and validation is not skipped
+              if (isFromTest && !skipValidation) {
+                const validator = ValidatorFactory.create("unknown");
+                const validation = validator.validate(
+                  "unknown",
+                  result,
+                  testExpected,
+                  true
+                );
+                return { result, validation };
+              }
+
+              return { result };
+            } catch (fallbackError) {
+              console.log(`Fallback chain also failed:`, fallbackError);
+              throw fallbackError;
+            }
+          }
         }
       }
     }
 
     // With monitoring
     const inputText = JSON.stringify(input);
-    monitor.startCall(finalChainName, inputText, isFromTest);
+    monitor.startCall(finalChainName!, inputText, isFromTest);
 
     console.log(`About to call ${finalChainName} chain...`);
-    try {
-      const result = await mainChain.invoke(input);
-      console.log(`${finalChainName} chain succeeded:`, result);
-
-      // Validate if this is a test and validation is not skipped
-      let validation = null;
-      if (isFromTest && !skipValidation) {
-        const validator = ValidatorFactory.create(finalChainName);
-        validation = validator.validate(
-          finalChainName,
-          result,
-          testExpected,
-          true
-        );
-        // Pass validation data to monitor
-        monitor.endCall(
-          finalChainName,
-          result,
-          undefined,
-          testExpected,
-          result,
-          validation.match
-        );
-      } else {
-        monitor.endCall(finalChainName, result);
-      }
-
-      if (isFromTest) {
-        return { result, validation };
-      }
-      return { result };
-    } catch (error) {
-      console.log(
-        `${finalChainName} main chain failed, trying fallback...`,
-        error
-      );
+    
+    // Try main chain up to 3 times
+    for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        const result = await fallbackChain.invoke(input);
-        console.log(`${finalChainName} fallback chain succeeded:`, result);
+        console.log(`Attempt ${attempt}/3 with ${finalChainName} main chain...`);
+        const result = await mainChain.invoke(input);
+        console.log(`${finalChainName} chain succeeded on attempt ${attempt}:`, result);
 
         // Validate if this is a test and validation is not skipped
         let validation = null;
         if (isFromTest && !skipValidation) {
-          const validator = ValidatorFactory.create(finalChainName);
+          const validator = ValidatorFactory.create(finalChainName!);
           validation = validator.validate(
-            finalChainName,
+            finalChainName!,
             result,
             testExpected,
             true
           );
           // Pass validation data to monitor
           monitor.endCall(
-            finalChainName,
+            finalChainName!,
             result,
             undefined,
             testExpected,
@@ -242,20 +218,62 @@ export function makeChain<T>(
             validation.match
           );
         } else {
-          monitor.endCall(finalChainName, result);
+          monitor.endCall(finalChainName!, result);
         }
 
         if (isFromTest) {
           return { result, validation };
         }
         return { result };
-      } catch (fallbackError) {
+      } catch (error) {
         console.log(
-          `${finalChainName} fallback chain also failed:`,
-          fallbackError
+          `${finalChainName} main chain attempt ${attempt} failed:`,
+          error
         );
-        monitor.endCall(finalChainName, null, fallbackError as Error);
-        throw fallbackError;
+        if (attempt === 3) {
+          console.log(
+            `All 3 ${finalChainName} main chain attempts failed, trying fallback...`
+          );
+          try {
+            const result = await fallbackChain.invoke(input);
+            console.log(`${finalChainName} fallback chain succeeded:`, result);
+
+            // Validate if this is a test and validation is not skipped
+            let validation = null;
+            if (isFromTest && !skipValidation) {
+              const validator = ValidatorFactory.create(finalChainName!);
+              validation = validator.validate(
+                finalChainName!,
+                result,
+                testExpected,
+                true
+              );
+              // Pass validation data to monitor
+              monitor.endCall(
+                finalChainName!,
+                result,
+                undefined,
+                testExpected,
+                result,
+                validation.match
+              );
+            } else {
+              monitor.endCall(finalChainName!, result);
+            }
+
+            if (isFromTest) {
+              return { result, validation };
+            }
+            return { result };
+          } catch (fallbackError) {
+            console.log(
+              `${finalChainName} fallback chain also failed:`,
+              fallbackError
+            );
+            monitor.endCall(finalChainName!, null, fallbackError as Error);
+            throw fallbackError;
+          }
+        }
       }
     }
   };

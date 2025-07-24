@@ -28,9 +28,9 @@ export async function makeSmartExtractLevelChain() {
       try {
         // try explicit
         const explicitResponse = await explicitChain(inputs);
-        const explicit = explicitResponse.result;
+        const explicit = explicitResponse?.result;
 
-        if (explicit.level) {
+        if (explicit?.level) {
           // found it
           const result = { text: explicit };
 
@@ -65,7 +65,7 @@ export async function makeSmartExtractLevelChain() {
 
         // fallback to inference
         const inferResponse = await inferChain(inputs);
-        const infer = inferResponse.result;
+        const infer = inferResponse?.result;
         const result = { text: infer };
 
         // Validate if this is a test

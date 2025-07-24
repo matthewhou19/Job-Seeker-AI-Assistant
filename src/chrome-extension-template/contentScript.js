@@ -175,7 +175,7 @@ const updateSidebarContent = (sidebar, data, error = null) => {
   }
   // Extract nested values
   const skills = data.skills?.result?.skills || [];
-  const domain = data.domain?.result?.domain || "Not detected";
+  const domain = data.domains?.result?.domains || "Not detected";
   const years = data.years?.result?.requestYears ?? "Not specified";
   const level = data.level?.result?.text?.level || "Not specified";
 
