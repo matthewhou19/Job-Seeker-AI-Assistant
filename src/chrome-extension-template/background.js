@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       console.log("Job received:", job);
       try {
         const response = await fetch(
-          "https://gthonwtc0zc3qd-3000.proxy.runpod.net/extract-all",
+          "https://api.joblyzer.net/extract-all/",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
