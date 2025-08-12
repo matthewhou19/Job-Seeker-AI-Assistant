@@ -147,7 +147,7 @@ export const DomainSchema = z.object({
       ])
     )
     .min(1, "At least one domain must be selected")
-    .max(3, "Maximum 5 domains allowed"),
+    .max(3, "Maximum 3 domains allowed"),
 });
 
 export type Domain = z.infer<typeof DomainSchema>;
