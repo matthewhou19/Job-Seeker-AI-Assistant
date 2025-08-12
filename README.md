@@ -117,7 +117,7 @@ src/
 
 ```bash
 # Clone the repository
-git clone https://github.com/Do-not-be-afraid-to-be-knonwn/Job-Seeker-AI-Assistant.git
+git clone https://github.com/Do-not-be-afraid-to-be-known/Job-Seeker-AI-Assistant.git
 cd Job-Seeker-AI-Assistant
 
 # Install dependencies
@@ -223,12 +223,11 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Matthew Hou** - [GitHub](https://github.com/Do-not-be-afraid-to-be-knonwn)
+**Matthew Hou** - [GitHub](https://github.com/Do-not-be-afraid-to-be-known)
 
 ## 🐛 Issues
 
-If you encounter any issues, please report them on the [GitHub Issues page](https://github.com/Do-not-be-afraid-to-be-knonwn/Job-Seeker-AI-Assistant/issues).
-
+If you encounter any issues, please report them on the [GitHub Issues page](https://github.com/Do-not-be-afraid-to-be-known/Job-Seeker-AI-Assistant/issues).
 ---
 
 **Built with ❤️ using LangChain, Ollama, and TypeScript**
