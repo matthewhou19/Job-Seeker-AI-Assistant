@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Do-not-be-afraid-to-be-knonwn/Job-Seeker-AI-Assistant"
+    "url": "git+https://github.com/Do-not-be-afraid-to-be-known/Job-Seeker-AI-Assistant"
   },
   "dependencies": {
     "@langchain/core": "^0.3.61",
@@ -34,9 +34,9 @@
   "author": "Matthew Hou",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Do-not-be-afraid-to-be-knonwn/Job-Seeker-AI-Assistant"
+      "url": "https://github.com/Do-not-be-afraid-to-be-known/Job-Seeker-AI-Assistant"
   },
-  "homepage": "https://github.com/Do-not-be-afraid-to-be-knonwn/Job-Seeker-AI-Assistant#readme",
+  "homepage": "https://github.com/Do-not-be-afraid-to-be-known/Job-Seeker-AI-Assistant#readme",
   "devDependencies": {
     "@types/body-parser": "^1.19.6",
     "@types/cors": "^2.8.19",
