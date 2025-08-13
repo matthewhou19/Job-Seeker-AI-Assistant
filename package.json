@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@langchain/core": "^0.3.61",
-    "@langchain/ollama": "^0.2.3",
+    "@google/generative-ai": "^0.3.0",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
