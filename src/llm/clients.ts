@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { config as dotenvConfig } from "dotenv";
 import {
   BaseLLM,
@@ -57,7 +57,7 @@ export class GeminiCLI extends BaseLLM<BaseLLMCallOptions> {
 }
 
 // Configure your primary model with built-in retries
-const geminiModel = process.env.GEMINI_MODEL || "gemini-2.0-flash-lite";
+const geminiModel = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 const geminiApiKey = process.env.GEMINI_API_KEY || "";
 const geminiTemperature = Number(process.env.GEMINI_TEMPERATURE) || 0.7;
 const geminiMaxRetries = Number(process.env.GEMINI_MAX_RETRIES) || 3;
@@ -69,11 +69,10 @@ class GeminiFlashLiteLLM extends BaseLLM<BaseLLMCallOptions> {
 
   constructor() {
     super({});
-    const genAI = new GoogleGenerativeAI(geminiApiKey);
-    this.model = genAI.getGenerativeModel({
-      model: geminiModel,
-      generationConfig: { temperature: geminiTemperature },
+    const genAI = new GoogleGenAI({
+      apiKey: geminiApiKey,
     });
+    this.model = genAI.models;
     this.maxRetries = geminiMaxRetries;
   }
 
@@ -84,8 +83,11 @@ class GeminiFlashLiteLLM extends BaseLLM<BaseLLMCallOptions> {
   async _call(prompt: string): Promise<string> {
     for (let attempt = 0; attempt < this.maxRetries; attempt++) {
       try {
-        const result = await this.model.generateContent(prompt);
-        return result.response.text();
+        const result = await this.model.generateContent({
+          model: geminiModel,
+          contents: prompt,
+        });
+        return result.text || "";
       } catch (err) {
         if (attempt === this.maxRetries - 1) throw err;
       }
@@ -180,7 +182,7 @@ export function makeChain<T>(
     // Skip monitoring if no chain name provided
     if (!finalChainName) {
       console.log(`About to call chain...`);
-      
+
       // Try main chain up to 3 times
       for (let attempt = 1; attempt <= 3; attempt++) {
         try {
@@ -236,13 +238,18 @@ export function makeChain<T>(
     monitor.startCall(finalChainName!, inputText, isFromTest);
 
     console.log(`About to call ${finalChainName} chain...`);
-    
+
     // Try main chain up to 3 times
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        console.log(`Attempt ${attempt}/3 with ${finalChainName} main chain...`);
+        console.log(
+          `Attempt ${attempt}/3 with ${finalChainName} main chain...`
+        );
         const result = await mainChain.invoke(input);
-        console.log(`${finalChainName} chain succeeded on attempt ${attempt}:`, result);
+        console.log(
+          `${finalChainName} chain succeeded on attempt ${attempt}:`,
+          result
+        );
 
         // Validate if this is a test and validation is not skipped
         let validation = null;
