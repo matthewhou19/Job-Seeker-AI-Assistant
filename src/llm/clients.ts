@@ -7,73 +7,34 @@ import {
 import { PromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { z } from "zod";
-import { spawnSync } from "child_process";
 import { ChainPerformanceMonitor } from "../monitor/ChainPerformanceMonitor";
 import { ValidatorFactory } from "../monitor/Validator";
 
 dotenvConfig();
 
-// 1. Custom Gemini CLI LLM wrapper
-export class GeminiCLI extends BaseLLM<BaseLLMCallOptions> {
-  lc_serializable = true;
-
-  constructor(public cliPath = "gemini", public model = "gemini-2.5-pro") {
-    super({});
-  }
-
-  _llmType() {
-    return "gemini-cli";
-  }
-
-  async _call(prompt: string): Promise<string> {
-    const args = ["--model", this.model];
-    const isWin = process.platform === "win32";
-    const geminiCmd = isWin ? "gemini.cmd" : this.cliPath;
-    const res = spawnSync(geminiCmd, args, {
-      input: prompt,
-      encoding: "utf-8",
-      shell: true,
-    });
-    if (res.error) throw res.error;
-    if (res.status !== 0) throw new Error(`Gemini CLI error: ${res.stderr}`);
-    return res.stdout;
-  }
-
-  async _generate(prompts: string[], options?: BaseLLMCallOptions) {
-    const generations = await Promise.all(
-      prompts.map(async (prompt) => {
-        const text = await this._call(prompt);
-        return {
-          text,
-          generationInfo: {},
-        };
-      })
-    );
-
-    return {
-      generations: [generations],
-    };
-  }
-}
-
-// Configure your primary model with built-in retries
-const geminiModel = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+// Configure your primary and fallback models with built-in retries
+const geminiPrimaryModel =
+  process.env.GEMINI_PRIMARY_MODEL || "gemini-2.5-flash-lite";
+const geminiFallbackModel =
+  process.env.GEMINI_FALLBACK_MODEL || "gemini-2.5-flash";
 const geminiApiKey = process.env.GEMINI_API_KEY || "";
 const geminiTemperature = Number(process.env.GEMINI_TEMPERATURE) || 0.7;
 const geminiMaxRetries = Number(process.env.GEMINI_MAX_RETRIES) || 3;
 
-class GeminiFlashLiteLLM extends BaseLLM<BaseLLMCallOptions> {
+class GeminiLLM extends BaseLLM<BaseLLMCallOptions> {
   lc_serializable = true;
   private model;
   private maxRetries;
+  private modelId;
 
-  constructor() {
+  constructor(modelId: string) {
     super({});
     const genAI = new GoogleGenAI({
       apiKey: geminiApiKey,
     });
     this.model = genAI.models;
     this.maxRetries = geminiMaxRetries;
+    this.modelId = modelId;
   }
 
   _llmType() {
@@ -84,7 +45,7 @@ class GeminiFlashLiteLLM extends BaseLLM<BaseLLMCallOptions> {
     for (let attempt = 0; attempt < this.maxRetries; attempt++) {
       try {
         const result = await this.model.generateContent({
-          model: geminiModel,
+          model: this.modelId,
           contents: prompt,
         });
         return result.text || "";
@@ -106,10 +67,8 @@ class GeminiFlashLiteLLM extends BaseLLM<BaseLLMCallOptions> {
   }
 }
 
-export const GeminiFlashLiteClient = new GeminiFlashLiteLLM();
-
-// Configure fallback model (CLI)
-export const GeminiCLIClient = new GeminiCLI();
+export const GeminiPrimaryClient = new GeminiLLM(geminiPrimaryModel);
+export const GeminiFallbackClient = new GeminiLLM(geminiFallbackModel);
 
 /**
  * Create a chain that uses LangChain's built-in retry and fallback mechanisms
@@ -126,7 +85,7 @@ export function makeChain<T>(
   // Create the main chain with built-in retries
   const mainChain = RunnableSequence.from([
     prompt,
-    GeminiFlashLiteClient,
+    GeminiPrimaryClient,
     (output: string) => {
       console.log("Gemini API raw output:", output);
       try {
@@ -149,12 +108,12 @@ export function makeChain<T>(
     },
   ]);
 
-  // Create the fallback chain
+  // Create the fallback chain using the Gemini API
   const fallbackChain = RunnableSequence.from([
     prompt,
-    GeminiCLIClient,
+    GeminiFallbackClient,
     (output: string) => {
-      console.log("Gemini CLI raw output:", output);
+      console.log("Gemini API fallback raw output:", output);
       try {
         // Extract JSON from markdown code blocks if present
         let jsonStr = output.trim();
