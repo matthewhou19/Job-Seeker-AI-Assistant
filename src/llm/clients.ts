@@ -1,4 +1,5 @@
-import { Ollama } from "@langchain/ollama";
+import { GoogleGenAI } from "@google/genai";
+import { config as dotenvConfig } from "dotenv";
 import {
   BaseLLM,
   BaseLLMCallOptions,
@@ -9,6 +10,8 @@ import { z } from "zod";
 import { spawnSync } from "child_process";
 import { ChainPerformanceMonitor } from "../monitor/ChainPerformanceMonitor";
 import { ValidatorFactory } from "../monitor/Validator";
+
+dotenvConfig();
 
 // 1. Custom Gemini CLI LLM wrapper
 export class GeminiCLI extends BaseLLM<BaseLLMCallOptions> {
@@ -54,14 +57,59 @@ export class GeminiCLI extends BaseLLM<BaseLLMCallOptions> {
 }
 
 // Configure your primary model with built-in retries
-export const OllamaClient = new Ollama({
-  model: "mistral",
-  temperature: 0.7,
-  maxRetries: 3, // LangChain's built-in retry mechanism
-});
+const geminiModel = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const geminiApiKey = process.env.GEMINI_API_KEY || "";
+const geminiTemperature = Number(process.env.GEMINI_TEMPERATURE) || 0.7;
+const geminiMaxRetries = Number(process.env.GEMINI_MAX_RETRIES) || 3;
 
-// Configure fallback model
-export const GeminiClient = new GeminiCLI();
+class GeminiFlashLiteLLM extends BaseLLM<BaseLLMCallOptions> {
+  lc_serializable = true;
+  private model;
+  private maxRetries;
+
+  constructor() {
+    super({});
+    const genAI = new GoogleGenAI({
+      apiKey: geminiApiKey,
+    });
+    this.model = genAI.models;
+    this.maxRetries = geminiMaxRetries;
+  }
+
+  _llmType() {
+    return "gemini-api";
+  }
+
+  async _call(prompt: string): Promise<string> {
+    for (let attempt = 0; attempt < this.maxRetries; attempt++) {
+      try {
+        const result = await this.model.generateContent({
+          model: geminiModel,
+          contents: prompt,
+        });
+        return result.text || "";
+      } catch (err) {
+        if (attempt === this.maxRetries - 1) throw err;
+      }
+    }
+    throw new Error("Gemini API failed");
+  }
+
+  async _generate(prompts: string[], options?: BaseLLMCallOptions) {
+    const generations = await Promise.all(
+      prompts.map(async (prompt) => {
+        const text = await this._call(prompt);
+        return { text, generationInfo: {} };
+      })
+    );
+    return { generations: [generations] };
+  }
+}
+
+export const GeminiFlashLiteClient = new GeminiFlashLiteLLM();
+
+// Configure fallback model (CLI)
+export const GeminiCLIClient = new GeminiCLI();
 
 /**
  * Create a chain that uses LangChain's built-in retry and fallback mechanisms
@@ -78,9 +126,9 @@ export function makeChain<T>(
   // Create the main chain with built-in retries
   const mainChain = RunnableSequence.from([
     prompt,
-    OllamaClient,
+    GeminiFlashLiteClient,
     (output: string) => {
-      console.log("Ollama raw output:", output);
+      console.log("Gemini API raw output:", output);
       try {
         // Extract JSON from markdown code blocks if present
         let jsonStr = output.trim();
@@ -104,9 +152,9 @@ export function makeChain<T>(
   // Create the fallback chain
   const fallbackChain = RunnableSequence.from([
     prompt,
-    GeminiClient,
+    GeminiCLIClient,
     (output: string) => {
-      console.log("Raw LLM output:", output);
+      console.log("Gemini CLI raw output:", output);
       try {
         // Extract JSON from markdown code blocks if present
         let jsonStr = output.trim();
@@ -134,7 +182,7 @@ export function makeChain<T>(
     // Skip monitoring if no chain name provided
     if (!finalChainName) {
       console.log(`About to call chain...`);
-      
+
       // Try main chain up to 3 times
       for (let attempt = 1; attempt <= 3; attempt++) {
         try {
@@ -190,13 +238,18 @@ export function makeChain<T>(
     monitor.startCall(finalChainName!, inputText, isFromTest);
 
     console.log(`About to call ${finalChainName} chain...`);
-    
+
     // Try main chain up to 3 times
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        console.log(`Attempt ${attempt}/3 with ${finalChainName} main chain...`);
+        console.log(
+          `Attempt ${attempt}/3 with ${finalChainName} main chain...`
+        );
         const result = await mainChain.invoke(input);
-        console.log(`${finalChainName} chain succeeded on attempt ${attempt}:`, result);
+        console.log(
+          `${finalChainName} chain succeeded on attempt ${attempt}:`,
+          result
+        );
 
         // Validate if this is a test and validation is not skipped
         let validation = null;

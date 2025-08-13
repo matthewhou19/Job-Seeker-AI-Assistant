@@ -126,8 +126,36 @@ npm install
 # Install Ollama (if not already installed)
 # Visit: https://ollama.ai/
 
-# Install Gemini CLI
-npm install -g @google/generative-ai
+# Pull the Mistral model for Ollama
+ollama pull mistral
+
+# Create .env file with your configuration
+cp env.example .env
+# Edit .env with your API keys and preferences
+```
+
+### Environment Configuration
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# Ollama Configuration (Primary LLM)
+OLLAMA_MODEL=mistral
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_TEMPERATURE=0.7
+
+# Gemini Configuration (Fallback LLM)
+GEMINI_MODEL=gemini-2.5-flash
+GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_TEMPERATURE=0.7
+GEMINI_MAX_RETRIES=3
+
+# LangSmith Configuration (Optional)
+LANGSMITH_API_KEY=your_langsmith_api_key_here
+LANGSMITH_PROJECT=job-seeker-ai-assistant
+
+# Server Configuration
+PORT=3000
 ```
 
 ## 📖 Usage
@@ -170,6 +198,9 @@ npm run smoke
 
 # Run local tests only
 npm run smoke:local
+
+# Test LLM setup
+npm run test-setup
 ```
 
 ### Test Data
@@ -191,8 +222,9 @@ npm run smoke:local
 ### LLM Configuration
 
 - **Primary**: Ollama with Mistral model (local processing)
-- **Fallback**: Gemini CLI (cloud processing)
+- **Fallback**: Gemini API with gemini-2.5-flash model (cloud processing)
 - **Retries**: Built-in retry mechanism with fallback
+- **CLI Fallback**: Gemini CLI as additional fallback option
 
 ### Validation System
 
@@ -227,7 +259,6 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 ## 🐛 Issues
 
-If you encounter any issues, please report them on the [GitHub Issues page](https://github.com/Do-not-be-afraid-to-be-known/Job-Seeker-AI-Assistant/issues).
----
+## If you encounter any issues, please report them on the [GitHub Issues page](https://github.com/Do-not-be-afraid-to-be-known/Job-Seeker-AI-Assistant/issues).
 
 **Built with ❤️ using LangChain, Ollama, and TypeScript**
