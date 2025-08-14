@@ -10,13 +10,16 @@
     "dev": "ts-node --watch src/scripts/runExtractSkills.ts",
     "smoke": "ts-node test/smoke/smokeTest.ts",
     "smoke:local": "ts-node test/smoke/smokeTestLocal.ts",
-    "export-metrics": "ts-node src/scripts/exportMetrics.ts"
+    "export-metrics": "ts-node src/scripts/exportMetrics.ts",
+    "test-setup": "ts-node test-setup.ts",
+    "test-new-api": "ts-node test-new-api.ts"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Do-not-be-afraid-to-be-known/Job-Seeker-AI-Assistant"
   },
   "dependencies": {
+    "@google/genai": "^0.2.0",
     "@langchain/core": "^0.3.61",
     "@langchain/ollama": "^0.2.3",
     "body-parser": "^2.2.0",
@@ -34,7 +37,7 @@
   "author": "Matthew Hou",
   "license": "ISC",
   "bugs": {
-      "url": "https://github.com/Do-not-be-afraid-to-be-known/Job-Seeker-AI-Assistant"
+    "url": "https://github.com/Do-not-be-afraid-to-be-known/Job-Seeker-AI-Assistant"
   },
   "homepage": "https://github.com/Do-not-be-afraid-to-be-known/Job-Seeker-AI-Assistant#readme",
   "devDependencies": {
