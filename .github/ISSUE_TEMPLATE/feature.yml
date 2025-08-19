@@ -1,0 +1,28 @@
+name: Feature
+description: Track a major feature and its sub-features
+title: "[Feature] "
+labels: [feature]
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: 🎯 Objective
+      description: Describe the goal of this feature.
+  - type: textarea
+    id: subfeatures
+    attributes:
+      label: 📋 Sub-Features
+      description: List sub-features (link to issues or PRs if possible)
+      placeholder: |
+        - [ ] Sub-feature 1 (# )
+        - [ ] Sub-feature 2 (# )
+        - [ ] Sub-feature 3 (# )
+  - type: textarea
+    id: context
+    attributes:
+      label: 🧩 Context
+      description: Related epics, dependencies, notes, and other relevant details.
+      placeholder: |
+        - Related epic: #
+        - Dependencies: #
+        - Notes:
