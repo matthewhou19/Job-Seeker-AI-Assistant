@@ -32,6 +32,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       try {
         const response = await fetch("https://api.joblyzer.net/feedback", {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
         if (!response.ok) {
