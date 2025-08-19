@@ -18,7 +18,7 @@ What specifically should this sub-feature deliver?
 
 ## ✅ Acceptance Criteria
 
-- [ ] Clear condition 1
+- [x ] Clear condition 1
 - [ ] Clear condition 2
 - [ ] Clear condition 3
 
