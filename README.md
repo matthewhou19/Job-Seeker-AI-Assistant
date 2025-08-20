@@ -13,7 +13,7 @@ Job seekers waste countless hours reading through lengthy job descriptions on pl
 - **Four Core Extraction Chains**: Skills, Level, Domain, and Years of Experience extraction
 - **Performance-Optimized**: High-speed validation and processing systems
 - **Comprehensive Testing**: Real job posting data validation and performance monitoring
-- **Dual LLM Architecture**: Reliable extraction with Ollama (local) + Gemini (fallback)
+- **Dual LLM Architecture**: Gemini 2.5 Flash Lite primary with Gemini 2.5 Flash fallback for reliability
 
 ### 🔄 What's Next
 
@@ -34,7 +34,7 @@ Job seekers waste countless hours reading through lengthy job descriptions on pl
 
 ### Technical Features
 
-- **Dual LLM Architecture**: Ollama (local) + Gemini (fallback) for reliability
+- **Dual LLM Architecture**: Gemini 2.5 Flash Lite + Gemini 2.5 Flash for reliability
 - **Performance Monitoring**: Real-time chain performance tracking and metrics
 - **Validation System**: Comprehensive test validation with flexible matching
 - **Optimized Processing**: High-performance validation and caching systems
@@ -110,24 +110,41 @@ src/
 ### Prerequisites
 
 - Node.js (v16 or higher)
-- Ollama (for local LLM processing)
-- Gemini CLI (for fallback processing)
+- Gemini API access
 
 ### Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/Do-not-be-afraid-to-be-knonwn/Job-Seeker-AI-Assistant.git
+git clone https://github.com/Do-not-be-afraid-to-be-known/Job-Seeker-AI-Assistant.git
 cd Job-Seeker-AI-Assistant
 
 # Install dependencies
 npm install
 
-# Install Ollama (if not already installed)
-# Visit: https://ollama.ai/
+# Create .env file with your configuration
+cp env.example .env
+# Edit .env with your API keys and preferences
+```
 
-# Install Gemini CLI
-npm install -g @google/generative-ai
+### Environment Configuration
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# Gemini Configuration
+GEMINI_PRIMARY_MODEL=gemini-2.5-flash-lite
+GEMINI_FALLBACK_MODEL=gemini-2.5-flash
+GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_TEMPERATURE=0.7
+GEMINI_MAX_RETRIES=3
+
+# LangSmith Configuration (Optional)
+LANGSMITH_API_KEY=your_langsmith_api_key_here
+LANGSMITH_PROJECT=job-seeker-ai-assistant
+
+# Server Configuration
+PORT=3000
 ```
 
 ## 📖 Usage
@@ -170,6 +187,9 @@ npm run smoke
 
 # Run local tests only
 npm run smoke:local
+
+# Test LLM setup
+npm run test-setup
 ```
 
 ### Test Data
@@ -184,14 +204,14 @@ npm run smoke:local
 
 - **Chain Performance**: Response times, token usage, success rates
 - **Validation Accuracy**: Test result matching and accuracy rates
-- **LLM Usage**: Ollama vs Gemini usage statistics
+- **LLM Usage**: primary vs fallback usage statistics
 
 ## 🔧 Configuration
 
 ### LLM Configuration
 
-- **Primary**: Ollama with Mistral model (local processing)
-- **Fallback**: Gemini CLI (cloud processing)
+- **Primary**: Gemini API with gemini-2.5-flash-lite model
+- **Fallback**: Gemini API with gemini-2.5-flash model
 - **Retries**: Built-in retry mechanism with fallback
 
 ### Validation System
@@ -223,12 +243,10 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Matthew Hou** - [GitHub](https://github.com/Do-not-be-afraid-to-be-knonwn)
+**Matthew Hou** - [GitHub](https://github.com/Do-not-be-afraid-to-be-known)
 
 ## 🐛 Issues
 
-If you encounter any issues, please report them on the [GitHub Issues page](https://github.com/Do-not-be-afraid-to-be-knonwn/Job-Seeker-AI-Assistant/issues).
+## If you encounter any issues, please report them on the [GitHub Issues page](https://github.com/Do-not-be-afraid-to-be-known/Job-Seeker-AI-Assistant/issues).
 
----
-
-**Built with ❤️ using LangChain, Ollama, and TypeScript**
+**Built with ❤️ using LangChain, Gemini, and TypeScript**
