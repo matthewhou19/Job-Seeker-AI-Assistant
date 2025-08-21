@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 const { fireEvent } = require('@testing-library/dom');
 const { updateSidebarContent } = require('./contentScript');
 
