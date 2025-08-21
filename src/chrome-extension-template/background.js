@@ -65,8 +65,10 @@ async function processQueue() {
   await setQueue(remaining);
 }
 
-setInterval(processQueue, PROCESS_INTERVAL_MS);
-processQueue();
+if (typeof process === "undefined" || process.env.NODE_ENV !== "test") {
+  setInterval(processQueue, PROCESS_INTERVAL_MS);
+  processQueue();
+}
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   console.log("Message received:", msg);
@@ -99,4 +101,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true;
   }
 });
+
+if (typeof module !== "undefined") {
+  module.exports = {
+    enqueueFeedback,
+    processQueue,
+    MAX_ATTEMPTS,
+    FEEDBACK_QUEUE_KEY,
+  };
+}
 
