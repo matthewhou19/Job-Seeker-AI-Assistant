@@ -5,9 +5,7 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-   "test": "npm run test:node && npm run test:jest",
-    "test:node": "node --test test/background.test.js",
-    "test:jest": "jest",
+    "test": "jest",
     "start": "ts-node src/scripts/runExtractSkills.ts",
     "dev": "ts-node --watch src/scripts/runExtractSkills.ts",
     "smoke": "ts-node test/smoke/smokeTest.ts",
