@@ -119,6 +119,10 @@ app.post("/feedback", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Chain server running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Chain server running on http://localhost:${PORT}`);
+  });
+}
+
+export default app;
