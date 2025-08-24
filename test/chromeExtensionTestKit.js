@@ -48,6 +48,7 @@ function loadBackgroundScript(backgroundPath) {
   const context = {
     chrome,
     console,
+    process: { env: { NODE_ENV: 'test', API_ORIGIN: 'localhost:3000' } },
     setInterval: setIntervalStub,
     clearInterval: () => {},
     fetch: async () => ({ ok: true, json: async () => ({}) }),

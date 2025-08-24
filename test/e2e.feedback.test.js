@@ -5,7 +5,7 @@ const { spawn } = require("child_process");
 
 const FEEDBACK_QUEUE_KEY = "feedbackQueue";
 const storage = { [FEEDBACK_QUEUE_KEY]: [] };
-
+const API_URL = process.env.API_ORIGIN;
 global.chrome = {
   storage: {
     local: {
@@ -57,7 +57,7 @@ describe("feedback end-to-end", () => {
 
     const realFetch = global.fetch;
     global.fetch = async (url, options) => {
-      if (url === "https://api.joblyzer.net/feedback") {
+      if (url === "https://" + API_URL + "/feedback") {
         url = "http://localhost:3000/feedback";
       }
       return await realFetch(url, options);

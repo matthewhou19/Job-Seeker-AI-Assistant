@@ -2,6 +2,7 @@
 process.env.NODE_ENV = "test";
 const FEEDBACK_QUEUE_KEY = "feedbackQueue";
 const storage = { [FEEDBACK_QUEUE_KEY]: [] };
+const API_URL = process.env.API_ORIGIN;
 
 global.chrome = {
   storage: {
@@ -52,7 +53,7 @@ describe("Background Script Tests", () => {
     expect(storage[FEEDBACK_QUEUE_KEY]).toEqual([]);
 
     const second = calls[1];
-    expect(second.url).toBe("https://api.joblyzer.net/feedback");
+    expect(second.url).toBe("https://" + API_URL + "/feedback");
     expect(second.options.method).toBe("POST");
     expect(second.options.headers["Content-Type"]).toBe("application/json");
     expect(second.options.body).toBe(JSON.stringify(payload));
